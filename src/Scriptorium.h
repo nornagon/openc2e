@@ -26,7 +26,7 @@
 using std::shared_ptr;
 #include <map>
 
-class script;
+struct script;
 
 class Scriptorium {
 protected:

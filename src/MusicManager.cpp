@@ -478,6 +478,8 @@ MusicLayer::MusicLayer(std::shared_ptr<MusicTrack> p) {
 	variables["Threat"] = 0.5f;
 }
 
+MusicLayer::~MusicLayer() = default;
+
 void MusicLayer::runUpdateBlock() {
 	if (!updatenode) return;
 
@@ -538,6 +540,8 @@ void MusicVoice::runUpdateBlock() {
 MusicAleotoricLayer::MusicAleotoricLayer(MNGAleotoricLayerNode *n, std::shared_ptr<MusicTrack> p) : MusicLayer(p) {
 	node = n;
 }
+
+MusicAleotoricLayer::~MusicAleotoricLayer() = default;
 
 void MusicAleotoricLayer::init() {
 	for (std::list<MNGNode *>::iterator i = node->children->begin(); i != node->children->end(); i++) {
@@ -662,6 +666,8 @@ MusicLoopLayer::MusicLoopLayer(MNGLoopLayerNode *n, std::shared_ptr<MusicTrack> 
 	node = n;
 	update_period = 0;
 }
+
+MusicLoopLayer::~MusicLoopLayer() = default;
 
 void MusicLoopLayer::init() {
 	for (std::list<MNGNode *>::iterator i = node->children->begin(); i != node->children->end(); i++) {

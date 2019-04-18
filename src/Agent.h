@@ -32,7 +32,7 @@
 #include "physics.h"
 #include <set>
 
-class script;
+struct script;
 class genomeFile;
 
 struct agentzorder {

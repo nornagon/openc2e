@@ -70,7 +70,7 @@ SDLMixerSource::SDLMixerSource() {
 SDLMixerSource::~SDLMixerSource() {
 }
 
-AudioClip SDLMixerSource::getClip() const {
+AudioClip SDLMixerSource::getClip() {
 	AudioClip clip(static_cast<AudioBuffer *>(this->clip.get()));
 	return clip;
 }

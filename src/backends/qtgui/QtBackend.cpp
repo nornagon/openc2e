@@ -77,7 +77,7 @@ void QtBackend::setup(QWidget *vp) {
 	putenv(windowid_str);
 #else
 	// alas, it sucks on Windows and OS X, so we use an offscreen buffer instead
-	putenv("SDL_VIDEODRIVER=dummy");
+	setenv("SDL_VIDEODRIVER", "dummy", true /* overwrite */);
 #endif
 	
 	SDLBackend::init();

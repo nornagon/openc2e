@@ -71,7 +71,7 @@ protected:
 public:
 	~SDLMixerSource();
 
-	virtual AudioClip getClip() const;
+	virtual AudioClip getClip();
 	virtual void setClip(const AudioClip &);
 	virtual SourceState getState() const;
 	virtual void play();

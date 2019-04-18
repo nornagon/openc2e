@@ -47,7 +47,7 @@ protected:
 
 public:
 	AudioClip getClip() { return clip; }
-	void setClip(AudioClip &ac) {
+	void setClip(const AudioClip &ac) {
 		assert(getState() == SS_STOP);
 		clip = ac;
 	}

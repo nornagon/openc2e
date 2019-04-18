@@ -181,7 +181,7 @@ struct script {
 
 class caosScript;
 
-class CAOSExpression;
+struct CAOSExpression;
 
 struct CAOSCmd {
 	const cmdinfo *op;
@@ -203,8 +203,6 @@ struct CAOSExpression {
 	CAOSExpression(int idx, const caosVar &c) : value(c), traceidx(idx) { }
 	CAOSExpression(int idx, const bytestring_t &c) : value(c), traceidx(idx) { }
 };
-
-class caosScript;
 
 struct costVisit : public boost::static_visitor<int> {
 	public:
@@ -259,7 +257,7 @@ protected:
 	void emitConst(const caosVar &);
 	std::shared_ptr<CAOSExpression> readExpr(const enum ci_type xtype);
 	void emitExpr(std::shared_ptr<CAOSExpression> ce);
-	const cmdinfo *readCommand(class token *t, const std::string &prefix, bool except = true);
+	const cmdinfo *readCommand(struct token *t, const std::string &prefix, bool except = true);
 	void parseloop(int state, void *info);
 
 	shared_ptr<std::vector<token> > tokens;

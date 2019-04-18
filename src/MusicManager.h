@@ -34,7 +34,7 @@ private:
 	bool playing_silence;
 	unsigned int current_latency;
 
-	shared_ptr<class MusicStream> stream;
+	shared_ptr<struct MusicStream> stream;
 
 	void startPlayback();
 
@@ -135,6 +135,7 @@ protected:
 	float updaterate, volume, interval, beatsynch, pan;
 
 	MusicLayer(shared_ptr<MusicTrack> p);
+	virtual ~MusicLayer();
 	void runUpdateBlock();
 
 public:
@@ -155,8 +156,9 @@ protected:
 
 public:
 	MusicAleotoricLayer(MNGAleotoricLayerNode *n, shared_ptr<MusicTrack> p);
+	~MusicAleotoricLayer() override;
 	void init();
-	void update(unsigned int latency);
+	void update(unsigned int latency) override;
 };
 
 class MusicLoopLayer : public MusicLayer {
@@ -168,8 +170,9 @@ protected:
 
 public:
 	MusicLoopLayer(MNGLoopLayerNode *n, shared_ptr<MusicTrack> p);
+	~MusicLoopLayer() override;
 	void init();
-	void update(unsigned int latency);
+	void update(unsigned int latency) override;
 };
 
 class MusicTrack : public std::enable_shared_from_this<class MusicTrack> {

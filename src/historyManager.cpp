@@ -143,8 +143,8 @@ monikerstatus monikerData::getStatus() {
 
 		default:
 			assert(false); // explode!
+			return status;
 	}
-
 }
 
 std::string historyManager::newMoniker(shared_ptr<genomeFile> genome) {

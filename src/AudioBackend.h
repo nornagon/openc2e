@@ -67,7 +67,7 @@ typedef boost::intrusive_ptr<AudioBuffer> AudioClip;
  * The implementation should not make any assumptions about how often any of these functions
  * will be called, if at all.
  */
-typedef std::shared_ptr<class AudioStreamBase> AudioStream;
+typedef std::shared_ptr<struct AudioStreamBase> AudioStream;
 struct AudioStreamBase {
 	virtual ~AudioStreamBase() { }
 

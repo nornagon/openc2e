@@ -33,7 +33,7 @@
 #include <boost/weak_ptr.hpp>
 using std::weak_ptr;
 
-class script;
+struct script;
 
 //#define CAOSDEBUG
 //#define CAOSDEBUGDETAIL
