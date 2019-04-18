@@ -256,17 +256,17 @@ void World::tick() {
 	
 	// Process the script queue.
 	std::list<scriptevent> newqueue;
-	for (std::list<scriptevent>::iterator i = scriptqueue.begin(); i != scriptqueue.end(); i++) {
-		std::shared_ptr<Agent> agent = i->agent.lock();
+	for (auto& i : scriptqueue) {
+		std::shared_ptr<Agent> agent = i.agent.lock();
 		if (agent) {
 			if (engine.version < 3) {
 				// only try running a collision script if the agent doesn't have a running script
 				// TODO: we don't really understand how script interruption in c1/c2 works
-				if (agent->vm && !agent->vm->stopped() && i->scriptno == 6) {
+				if (agent->vm && !agent->vm->stopped() && i.scriptno == 6) {
 					continue;
 				}
 			}
-			agent->fireScript(i->scriptno, i->from, i->p[0], i->p[1]);
+			agent->fireScript(i.scriptno, i.from, i.p[0], i.p[1]);
 		}
 	}
 	scriptqueue.clear();
@@ -315,8 +315,7 @@ CompoundPart *World::partAt(unsigned int x, unsigned int y, bool obey_all_transp
 
 	MetaRoom *m = world.map.metaRoomAt(x, y); // for wraparound checking
 
-	for (std::multiset<CompoundPart *, partzorder>::iterator i = zorder.begin(); i != zorder.end(); i++) {
-		CompoundPart *p = *i;
+	for (auto& p : zorder) {
 		if (p->getParent() == theHand) continue;
 
 		int ax = (int)(x - p->getParent()->x);
@@ -438,43 +437,40 @@ void World::drawWorld(Camera *cam, Surface *surface) {
 	}
 
 	// render all the agents
-	for (std::multiset<renderable *, renderablezorder>::iterator i = renders.begin(); i != renders.end(); i++) {
-		if ((*i)->showOnRemoteCameras() || cam == camera) {
+	for (auto& i : renders) {
+		if (i->showOnRemoteCameras() || cam == camera) {
 			// three-pass for wraparound rooms, the third since agents often straddle the boundary
 			// TODO: same as above with background rendering
 			for (unsigned int z = 0; z < (m->wraparound() ? 3 : 1); z++) {
 				int newx = -adjustx, newy = -adjusty;
 				if (z == 1) newx += m->width();
 				else if (z == 2) newx -= m->width();
-				(*i)->render(surface, newx, newy);
+				i->render(surface, newx, newy);
 			}
 		}
 	}
 
 	// render port connection lines. TODO: these should be rendered as some kind
 	// of renderable, not directly like this.
-	for (std::list<std::shared_ptr<Agent> >::iterator i = world.agents.begin(); i != world.agents.end(); i++) {
-		std::shared_ptr<Agent> a = *i;
+	for (auto& a : world.agents) {
 		if (!a) continue;
-		for (std::map<unsigned int, std::shared_ptr<OutputPort> >::iterator p = a->outports.begin();
-		     p != a->outports.end(); p++) {
-			for (PortConnectionList::iterator c = p->second->dests.begin(); c != p->second->dests.end(); c++) {
-				if (!c->first) continue;
-				InputPort *target = c->first->inports[c->second].get();
-				surface->renderLine(a->x + p->second->x - adjustx, a->y + p->second->y - adjusty,
-						c->first->x + target->x - adjustx, c->first->y + target->y - adjusty, 0x00ff00ff);
+		for (auto& p : a->outports) {
+			for (auto& c : p.second->dests) {
+				if (!c.first) continue;
+				InputPort *target = c.first->inports[c.second].get();
+				surface->renderLine(a->x + p.second->x - adjustx, a->y + p.second->y - adjusty,
+						c.first->x + target->x - adjustx, c.first->y + target->y - adjusty, 0x00ff00ff);
 			}
 		}
 	}
 
 	if (showrooms) {
 		shared_ptr<Room> r = map.roomAt(hand()->x, hand()->y);
-		for (std::vector<shared_ptr<Room> >::iterator i = cam->getMetaRoom()->rooms.begin();
-				 i != cam->getMetaRoom()->rooms.end(); i++) {
+		for (auto& i : cam->getMetaRoom()->rooms) {
 			unsigned int col = 0xFFFF00CC;
-			if (*i == r) col = 0xFF00FFCC;
+			if (i == r) col = 0xFF00FFCC;
 			else if (r) {
-				if ((**i).doors.find(r) != (**i).doors.end())
+				if (i->doors.find(r) != i->doors.end())
 					col = 0x00FFFFCC;
 			}
 
@@ -484,7 +480,7 @@ void World::drawWorld(Camera *cam, Surface *surface) {
 				if (z == 1)
 					newx -= m->width();
 
-				(*i)->renderBorders(surface, newx, adjusty, col);
+				i->renderBorders(surface, newx, adjusty, col);
 			}
 		}
 	}
@@ -543,14 +539,15 @@ void World::executeBootstrap(fs::path p) {
 	std::vector<fs::path> scripts;
 	
 	fs::directory_iterator fsend;
-	for (fs::directory_iterator d(p); d != fsend; ++d) {
-		if ((!fs::is_directory(*d)) && (fs::extension(*d) == ".cos"))
-			scripts.push_back(*d);
+	//for (fs::directory_iterator d(p); d != fsend; ++d) {
+	for (auto& d : p) {
+		if ((!fs::is_directory(d)) && (fs::extension(d) == ".cos"))
+			scripts.push_back(d);
 	}
 
 	std::sort(scripts.begin(), scripts.end());
-	for (std::vector<fs::path>::iterator i = scripts.begin(); i != scripts.end(); i++)
-		executeInitScript(*i);
+	for (auto& i : scripts)
+		executeInitScript(i);
 }
 
 void World::executeBootstrap(bool switcher) {
@@ -576,16 +573,16 @@ void World::executeBootstrap(bool switcher) {
 	// TODO: this code is possibly wrong with multiple bootstrap directories
 	std::multimap<std::string, fs::path> bootstraps;
 
-	for (std::vector<fs::path>::iterator i = data_directories.begin(); i != data_directories.end(); i++) {
-		assert(fs::exists(*i));
-		assert(fs::is_directory(*i));
-		fs::path b(*i / "/Bootstrap/");
+	for (auto& i : data_directories) {
+		assert(fs::exists(i));
+		assert(fs::is_directory(i));
+		fs::path b(i / "/Bootstrap/");
 		if (fs::exists(b) && fs::is_directory(b)) {
 			fs::directory_iterator fsend;
 			// iterate through each bootstrap directory
-			for (fs::directory_iterator d(b); d != fsend; ++d) {
-				if (fs::exists(*d) && fs::is_directory(*d)) {
-					std::string s = d->path().leaf().string();
+			for (auto& d : b) {
+				if (fs::exists(d) && fs::is_directory(d)) {
+					std::string s = d.leaf().string();
 					// TODO: cvillage has switcher code in 'Startup', so i included it here too
 					if (s == "000 Switcher" || s == "Startup") {
 						if (!switcher) continue;
@@ -593,23 +590,23 @@ void World::executeBootstrap(bool switcher) {
 						if (switcher) continue;
 					}
 					
-					bootstraps.insert(std::pair<std::string, fs::path>(s, *d));
+					bootstraps.insert(std::pair<std::string, fs::path>(s, d));
 				}
 			}
 		}
 	}
 
-	for (std::multimap<std::string, fs::path>::iterator i = bootstraps.begin(); i != bootstraps.end(); i++) {
-		executeBootstrap(i->second);
+	for (auto& i : bootstraps) {
+		executeBootstrap(i.second);
 	}
 }
 
 void World::initCatalogue() {
-	for (std::vector<fs::path>::iterator i = data_directories.begin(); i != data_directories.end(); i++) {
-		assert(fs::exists(*i));
-		assert(fs::is_directory(*i));
+	for (auto& i : data_directories) {
+		assert(fs::exists(i));
+		assert(fs::is_directory(i));
 
-		fs::path c(*i / "/Catalogue/");
+		fs::path c(i / "/Catalogue/");
 		if (fs::exists(c) && fs::is_directory(c))
 			catalogue.initFrom(c);
 	}
@@ -653,9 +650,9 @@ void World::selectCreature(std::shared_ptr<Agent> a) {
 	}
 
 	if (selectedcreature != a) {
-		for (std::list<std::shared_ptr<Agent> >::iterator i = world.agents.begin(); i != world.agents.end(); i++) {
-			if (!*i) continue;
-			(*i)->queueScript(120, 0, caosVar(a.get()), caosVar(selectedcreature)); // selected creature changed
+		for (auto& i : world.agents) {
+			if (!i) continue;
+			i->queueScript(120, 0, caosVar(a.get()), caosVar(selectedcreature)); // selected creature changed
 		}
 
 		selectedcreature = a;
