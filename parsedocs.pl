@@ -33,6 +33,7 @@ my %fnmap = ( # default category mappings
 	'caosVM_vectors.cpp' => 'Vectors',
 	'caosVM_vehicles.cpp' => 'Vehicles',
 	'caosVM_world.cpp' => 'World',
+	'caosVM_ser_stub.cpp' => 'Scriptorium',
 );
 
 my %data;
@@ -180,7 +181,7 @@ while (<>) {
 	}
 
 	$stackdelta = $pragma{stackdelta} if defined $pragma{stackdelta};
-	$stackdelta = "INT_MAX" if lc $pragma{stackdelta} eq "any";
+	$stackdelta = "INT_MAX" if lc $stackdelta eq "any";
 	die "Deprecated use of pragma retc for $fullname" if defined $pragma{retc};
 
 
