@@ -25,7 +25,7 @@
 #include <set>
 #include <map>
 
-using boost::shared_ptr;
+using std::shared_ptr;
 
 struct oldSVRule {
 	unsigned int length;

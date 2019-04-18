@@ -51,17 +51,17 @@ extern "C" int main(int argc, char *argv[]) {
 		std::cout << "openc2e (" << version << "), built " __DATE__ " " __TIME__ "\nCopyright (c) 2004-2008 "
 			"Alyssa Milburn and others\n\n";
 
-		engine.addPossibleBackend("sdl", shared_ptr<Backend>(new SDLBackend()));
+		engine.addPossibleBackend("sdl", std::shared_ptr<Backend>(new SDLBackend()));
 #ifdef QT_SUPPORT
-		boost::shared_ptr<QtBackend> qtbackend = boost::shared_ptr<QtBackend>(new QtBackend());
-		boost::shared_ptr<Backend> qtbackend_generic = boost::dynamic_pointer_cast<class Backend, class QtBackend>(qtbackend);
+		std::shared_ptr<QtBackend> qtbackend = std::shared_ptr<QtBackend>(new QtBackend());
+		std::shared_ptr<Backend> qtbackend_generic = std::dynamic_pointer_cast<class Backend, class QtBackend>(qtbackend);
 		engine.addPossibleBackend("qt", qtbackend_generic); // last-added backend is default
 #endif
 #ifdef SDLMIXER_SUPPORT
-		engine.addPossibleAudioBackend("sdlmixer", shared_ptr<AudioBackend>(new SDLMixerBackend()));
+		engine.addPossibleAudioBackend("sdlmixer", std::shared_ptr<AudioBackend>(new SDLMixerBackend()));
 #endif
 #ifdef OPENAL_SUPPORT
-		engine.addPossibleAudioBackend("openal", shared_ptr<AudioBackend>(new OpenALBackend()));
+		engine.addPossibleAudioBackend("openal", std::shared_ptr<AudioBackend>(new OpenALBackend()));
 #endif
 
 		// pass command-line flags to the engine, but do no other setup

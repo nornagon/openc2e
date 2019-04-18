@@ -25,7 +25,7 @@ class openc2eView : public QAbstractScrollArea {
 	Q_OBJECT
 
 public:
-	openc2eView(QWidget *parent, boost::shared_ptr<class QtBackend>);
+	openc2eView(QWidget *parent, std::shared_ptr<class QtBackend>);
 	~openc2eView();
 
 protected:
@@ -47,7 +47,7 @@ protected:
 	void scrollContentsBy(int dx, int dy);
 
 	// variables
-	boost::shared_ptr<class QtBackend> backend;
+	std::shared_ptr<class QtBackend> backend;
 	int lastmousex, lastmousey;
 	class MetaRoom *lastMetaroom;
 
@@ -55,7 +55,7 @@ protected:
 	void resizescrollbars();
 
 public:
-	boost::shared_ptr<class Backend> getBackend();
+	std::shared_ptr<class Backend> getBackend();
 	bool needsRender();
 	void tick();
 };

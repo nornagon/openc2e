@@ -28,10 +28,10 @@ class creaturesImage;
 
 class imageManager {
 protected:
-	std::map<std::string, boost::weak_ptr<creaturesImage> > images;
+	std::map<std::string, std::weak_ptr<creaturesImage> > images;
 
 public:
-	boost::shared_ptr<creaturesImage> getImage(std::string name, bool is_background = false);
+	std::shared_ptr<creaturesImage> getImage(std::string name, bool is_background = false);
 };
 
 #endif

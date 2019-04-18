@@ -45,8 +45,8 @@ protected:
 
 	BufferList::iterator blit;
 
-	boost::weak_ptr<class OpenALBackend> backend;
-	OpenALBuffer(boost::shared_ptr<class OpenALBackend>, ALuint);
+	std::weak_ptr<class OpenALBackend> backend;
+	OpenALBuffer(std::shared_ptr<class OpenALBackend>, ALuint);
 	friend class OpenALBackend;
 	friend class OpenALSource;
 
@@ -71,7 +71,7 @@ namespace boost {
 	}
 }
 
-typedef boost::shared_ptr<class OpenALStreamBuf> OpenALStreamBufP;
+typedef std::shared_ptr<class OpenALStreamBuf> OpenALStreamBufP;
 class OpenALStreamBuf {
 	ALuint bufferID, format;
 	int freq, bitDepth, approx_ms;
@@ -92,9 +92,9 @@ protected:
 
 	SourceList::iterator slit;
 
-	boost::weak_ptr<class OpenALBackend> backend_weak;
-	boost::shared_ptr<class OpenALBackend> backend() const;
-	OpenALSource(boost::shared_ptr<class OpenALBackend>);
+	std::weak_ptr<class OpenALBackend> backend_weak;
+	std::shared_ptr<class OpenALBackend> backend() const;
+	OpenALSource(std::shared_ptr<class OpenALBackend>);
 	friend class OpenALBackend;
 
 	OpenALClip clip;
@@ -142,8 +142,8 @@ protected:
 	bool muted;
 
 	// these are weak to avoid a reference loop
-	std::map<OpenALSource *, boost::weak_ptr<AudioSource> > followingSrcs;
-	std::map<OpenALSource *, boost::weak_ptr<AudioSource> > pollingSrcs;
+	std::map<OpenALSource *, std::weak_ptr<AudioSource> > followingSrcs;
+	std::map<OpenALSource *, std::weak_ptr<AudioSource> > pollingSrcs;
 	friend class OpenALSource;
 	friend class OpenALBuffer;
 
@@ -156,13 +156,13 @@ protected:
 	void startPolling(OpenALSource *);
 	void stopPolling(OpenALSource *);
 
-	boost::shared_ptr<AudioSource> bgmSource;
+	std::shared_ptr<AudioSource> bgmSource;
 
 public:
-	boost::shared_ptr<OpenALBackend> shared_from_this() {
+	std::shared_ptr<OpenALBackend> shared_from_this() {
 		return boost::static_pointer_cast<OpenALBackend, AudioBackend>(this->AudioBackend::shared_from_this());
 	}
-	boost::shared_ptr<const OpenALBackend> shared_from_this() const {
+	std::shared_ptr<const OpenALBackend> shared_from_this() const {
 		return boost::static_pointer_cast<const OpenALBackend, const AudioBackend>(this->AudioBackend::shared_from_this());
 	}
 
@@ -174,8 +174,8 @@ public:
 	void setMute(bool m);
 	bool isMuted() const { return muted; }
 
-	boost::shared_ptr<AudioSource> newSource();
-	boost::shared_ptr<AudioSource> getBGMSource();
+	std::shared_ptr<AudioSource> newSource();
+	std::shared_ptr<AudioSource> getBGMSource();
 	AudioClip loadClip(const std::string &filename);
 
 	void begin();

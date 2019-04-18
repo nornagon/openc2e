@@ -23,7 +23,7 @@
 #include "music/mngfile.h"
 #include "endianlove.h"
 #include <boost/shared_ptr.hpp>
-using boost::shared_ptr;
+using std::shared_ptr;
 #include <boost/enable_shared_from_this.hpp>
 
 class MusicManager {
@@ -124,7 +124,7 @@ public:
 	MusicLayer *getParent() { return parent; }
 };
 
-class MusicLayer : public boost::enable_shared_from_this<class MusicLayer> {
+class MusicLayer : public std::enable_shared_from_this<class MusicLayer> {
 protected:
 	MNGUpdateNode *updatenode;
 
@@ -172,7 +172,7 @@ public:
 	void update(unsigned int latency);
 };
 
-class MusicTrack : public boost::enable_shared_from_this<class MusicTrack> {
+class MusicTrack : public std::enable_shared_from_this<class MusicTrack> {
 protected:
 	MNGTrackDecNode *node;
 	MNGFile *parent;

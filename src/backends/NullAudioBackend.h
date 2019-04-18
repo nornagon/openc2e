@@ -34,11 +34,11 @@ public:
 	void setViewpointCenter(float, float) { }
 	void setMute(bool b) { muted = b; }
 	bool isMuted() const { return muted; }
-	boost::shared_ptr<AudioSource> newSource() { return boost::shared_ptr<AudioSource>(); }
+	std::shared_ptr<AudioSource> newSource() { return std::shared_ptr<AudioSource>(); }
 	AudioClip loadClip(const std::string &) { return AudioClip(); }
 
-	boost::shared_ptr<AudioSource> getBGMSource() {
-		return boost::shared_ptr<AudioSource>();
+	std::shared_ptr<AudioSource> getBGMSource() {
+		return std::shared_ptr<AudioSource>();
 	}
 };
  

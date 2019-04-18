@@ -37,7 +37,7 @@ class Creature {
 protected:
 	CreatureAgent *parent;
 	Agent *parentagent;
-	boost::shared_ptr<genomeFile> genome;
+	std::shared_ptr<genomeFile> genome;
 	
 	// non-specific bits
 	unsigned short genus;
@@ -72,7 +72,7 @@ protected:
 	virtual void processGenes();
 	virtual void addGene(gene *);
 	
-	Creature(boost::shared_ptr<genomeFile> g, bool is_female, unsigned char _variant, CreatureAgent *a);
+	Creature(std::shared_ptr<genomeFile> g, bool is_female, unsigned char _variant, CreatureAgent *a);
 	void finishInit();
 
 public:
@@ -91,7 +91,7 @@ public:
 	void setZombie(bool z) { zombie = z; }
 	bool isZombie() { return zombie; }
 	unsigned int getAge() { return age; }
-	boost::shared_ptr<genomeFile> getGenome() { return genome; }
+	std::shared_ptr<genomeFile> getGenome() { return genome; }
 
 	unsigned short getGenus() { return genus; }
 	unsigned int getVariant() { return variant; }

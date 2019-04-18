@@ -160,7 +160,7 @@ void OpenALBackend::setMute(bool m) {
 }
 
 void OpenALSource::setFollowingView(bool f) {
-	boost::shared_ptr<OpenALBackend> bp = backend();
+	std::shared_ptr<OpenALBackend> bp = backend();
 	if (f == followview)
 		return; // nothing to do
 	if (f) {
@@ -173,8 +173,8 @@ void OpenALSource::setFollowingView(bool f) {
 	followview = f;
 }
 
-boost::shared_ptr<AudioSource> OpenALBackend::newSource() {
-	return boost::shared_ptr<AudioSource>(new OpenALSource(shared_from_this()));
+std::shared_ptr<AudioSource> OpenALBackend::newSource() {
+	return std::shared_ptr<AudioSource>(new OpenALSource(shared_from_this()));
 }
 
 AudioClip OpenALBackend::loadClip(const std::string &filename) {
@@ -203,7 +203,7 @@ void OpenALBackend::commit() {
 }
 
 void OpenALSource::forceCleanup() {
-	boost::shared_ptr<OpenALBackend> bp = backend_weak.lock();
+	std::shared_ptr<OpenALBackend> bp = backend_weak.lock();
 	if (!bp)
 		return;
 	bp->activeSources.erase(slit);
@@ -214,14 +214,14 @@ void OpenALSource::forceCleanup() {
 	stream.reset();
 }
 
-boost::shared_ptr<class OpenALBackend> OpenALSource::backend() const {
-	boost::shared_ptr<OpenALBackend> bp = backend_weak.lock();
+std::shared_ptr<class OpenALBackend> OpenALSource::backend() const {
+	std::shared_ptr<OpenALBackend> bp = backend_weak.lock();
 	if (!bp)
 		throw creaturesException("Attempted to manipulate a source on a destroyed backend");
 	return bp;
 }
 
-OpenALSource::OpenALSource(boost::shared_ptr<class OpenALBackend> backend) {
+OpenALSource::OpenALSource(std::shared_ptr<class OpenALBackend> backend) {
 	assert(backend);
 	this->backend_weak = backend;
 	alGetError();
@@ -236,7 +236,7 @@ OpenALSource::OpenALSource(boost::shared_ptr<class OpenALBackend> backend) {
 	slit = backend->activeSources.insert(backend->activeSources.end(), this);
 }
 
-OpenALBuffer::OpenALBuffer(boost::shared_ptr<class OpenALBackend> bp, ALuint handle) {
+OpenALBuffer::OpenALBuffer(std::shared_ptr<class OpenALBackend> bp, ALuint handle) {
 	assert(bp);
 	backend = bp;
 	buffer = handle;
@@ -245,7 +245,7 @@ OpenALBuffer::OpenALBuffer(boost::shared_ptr<class OpenALBackend> bp, ALuint han
 }
 
 void OpenALBuffer::destroy() {
-	boost::shared_ptr<OpenALBackend> bp = backend.lock();
+	std::shared_ptr<OpenALBackend> bp = backend.lock();
 	if (bp) {
 		alDeleteBuffers(1, &buffer);
 		bp->activeBuffers.erase(blit);
@@ -409,7 +409,7 @@ bool OpenALSource::bufferdata() {
 		if (result) {
 			OpenALStreamBufP buf;
 			if (unusedbuffers.empty())
-				buf = boost::shared_ptr<OpenALStreamBuf>(new OpenALStreamBuf(stream->sampleRate(), stream->bitDepth(), stream->isStereo()));
+				buf = std::shared_ptr<OpenALStreamBuf>(new OpenALStreamBuf(stream->sampleRate(), stream->bitDepth(), stream->isStereo()));
 			else {
 				buf = unusedbuffers.back();
 				unusedbuffers.pop_back();
@@ -453,20 +453,20 @@ void OpenALSource::pause() {
 	alSourcePause(source);
 }
 
-static void fadeSource(boost::weak_ptr<AudioSource> s) {
+static void fadeSource(std::weak_ptr<AudioSource> s) {
 	int fadeout = 500; // TODO: good value?
 
 	/* We adjust gain every 10ms until we reach fadeout ms. */
 	const int steps = fadeout / 10;
 	const float adjust = 1.0 / (float)steps;
 	for (int i = 0; i < steps; i++) {
-		boost::shared_ptr<AudioSource> p = s.lock();
+		std::shared_ptr<AudioSource> p = s.lock();
 		if (!p) return;
 		p->setVolume(1.0f - adjust * (float)i);
 		SDL_Delay(10); // XXX: do we have some other portable sleeping primitive we can use?
 		// boost::thread::sleep is a bit iffy, it seems
 	}
-	boost::shared_ptr<AudioSource> p = s.lock();
+	std::shared_ptr<AudioSource> p = s.lock();
 	if (p)
 		p->stop();
 }
@@ -524,12 +524,12 @@ void OpenALSource::setMute(bool m) {
 }
 
 void OpenALBackend::poll() {
-	std::map<OpenALSource *, boost::weak_ptr<AudioSource> >::iterator it, next;
+	std::map<OpenALSource *, std::weak_ptr<AudioSource> >::iterator it, next;
 	it = pollingSrcs.begin();
 
 	for (; it != pollingSrcs.end(); it = next) {
 		next = it; next++;
-		boost::shared_ptr<AudioSource> p = it->second.lock();
+		std::shared_ptr<AudioSource> p = it->second.lock();
 		if (!p) {
 			pollingSrcs.erase(it);
 			continue;
@@ -542,7 +542,7 @@ void OpenALBackend::poll() {
 }
 
 void OpenALBackend::startPolling(OpenALSource *src_p) {
-	pollingSrcs[src_p] = boost::weak_ptr<AudioSource>(src_p->shared_from_this());
+	pollingSrcs[src_p] = std::weak_ptr<AudioSource>(src_p->shared_from_this());
 }
 
 void OpenALBackend::stopPolling(OpenALSource *src_p) {
@@ -553,7 +553,7 @@ class OpenALBGMSource : public OpenALSource {
 	protected:
 		bool init;
 		friend class OpenALBackend;
-		OpenALBGMSource(boost::shared_ptr<OpenALBackend> b)
+		OpenALBGMSource(std::shared_ptr<OpenALBackend> b)
 			: OpenALSource(b)
 		{
 			init = true;
@@ -581,9 +581,9 @@ class OpenALBGMSource : public OpenALSource {
 		}
 };
 
-boost::shared_ptr<AudioSource> OpenALBackend::getBGMSource() {
+std::shared_ptr<AudioSource> OpenALBackend::getBGMSource() {
 	if (!bgmSource) {
-		bgmSource = boost::shared_ptr<AudioSource>(
+		bgmSource = std::shared_ptr<AudioSource>(
 				new OpenALBGMSource(
 					shared_from_this()
 				)

@@ -25,7 +25,7 @@ class QtOpenc2e : public QMainWindow {
 	Q_OBJECT
 
 public:
-	QtOpenc2e(boost::shared_ptr<class QtBackend>);
+	QtOpenc2e(std::shared_ptr<class QtBackend>);
 	~QtOpenc2e();
 
 	class Creature *getSelectedCreature();

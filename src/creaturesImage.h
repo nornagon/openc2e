@@ -59,7 +59,7 @@ public:
 	virtual uint8 *getCustomPalette();
 	
 	virtual bool transparentAt(unsigned int frame, unsigned int x, unsigned int y);
-	virtual boost::shared_ptr<creaturesImage> mutableCopy();
+	virtual std::shared_ptr<creaturesImage> mutableCopy();
 	virtual void tint(unsigned char r, unsigned char g, unsigned char b, unsigned char rotation, unsigned char swap);
 };
 

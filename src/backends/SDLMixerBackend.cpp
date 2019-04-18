@@ -48,8 +48,8 @@ void SDLMixerBackend::setMute(bool m) {
 	muted = m;
 }
 
-boost::shared_ptr<AudioSource> SDLMixerBackend::newSource() {
-	return boost::shared_ptr<AudioSource>(new SDLMixerSource());
+std::shared_ptr<AudioSource> SDLMixerBackend::newSource() {
+	return std::shared_ptr<AudioSource>(new SDLMixerSource());
 }
 
 AudioClip SDLMixerBackend::loadClip(const std::string &filename) {

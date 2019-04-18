@@ -97,7 +97,7 @@ sub miscprep {
 sub printinit {
 	my ($variant, $cmdarr, $exparr) = @_;
 	print "static void init_$variant() {\n";
-	print qq{\tdialects["$variant"] = boost::shared_ptr<Dialect>(new Dialect($cmdarr, std::string("$variant")));\n};
+	print qq{\tdialects["$variant"] = std::shared_ptr<Dialect>(new Dialect($cmdarr, std::string("$variant")));\n};
 	print "}\n";
 	push @init_funcs, "init_$variant";
 }
